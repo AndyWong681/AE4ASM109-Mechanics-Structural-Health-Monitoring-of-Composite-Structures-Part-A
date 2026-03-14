@@ -35,8 +35,7 @@ print("Strain in each layer:")
 for i in range(len(angle_arr_rad)):
     print(f"Layer {i+1} (angle {angle_arr_deg[i]} degrees): strain x {layer_strain_lst[i][0]*10e-6} [με]| strain y {layer_strain_lst[i][1]*10e-6} [με]| strain xy {layer_strain_lst[i][2]*10e-6} [με]")   
 
+
 print("\nStress in each layer:")
 for i in range(len(angle_arr_rad)):
-    print(f"Layer {i+1} (angle {angle_arr_deg[i]} degrees): stress x {layer_stress_lst[i][0]*10e-6} [MPa]| stress y {layer_stress_lst[i][1]*10e-6} [MPa]| stress xy {layer_stress_lst[i][2]*10e-9} [GPa]")
-
-
+    print(f"Layer {i+1} (angle {angle_arr_deg[i]} degrees): stress x {layer_stress_lst[i][0]*10e-6} [MPa]| stress y {layer_stress_lst[i][1]*10e-6} [MPa]| stress xy {layer_stress_lst[i][2]*10e-6} [MPa]")
