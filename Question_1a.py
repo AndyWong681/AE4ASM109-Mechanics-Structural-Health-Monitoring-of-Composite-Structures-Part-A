@@ -21,7 +21,7 @@ def main():
     vyx_f_arr = []
     Gxy_f_arr = []
     
-    Q11, Q12, Q22, Q66 = local_elastic_property(E1, E2, G12, v12)
+    Q11, Q12, Q22, Q66, _ = local_elastic_property(E1, E2, G12, v12)
 
     for phi in range(-90, 91, 10): 
         Ex_temp = []
@@ -43,10 +43,10 @@ def main():
                 zcoord_arr = zcoordinate(angle_arr, t)
                 
                 Q_overall = Q_transformed(Q11, Q12, Q22, Q66, angle_arr) 
-                ABD_matrix = ABD_Calc(Q_overall, zcoord_arr)    #For each angle combination, we will have a different ABD matrix, which will give us different engineering constants.
+                ABD_matrix = ABD_Calc(Q_overall, zcoord_arr)    # For each angle combination, we will have a different ABD matrix, which will give us different engineering constants.
                 Ex, Ey, vxy, vyx, Gxy, Ex_f, Ey_f, vxy_f, vyx_f, Gxy_f = Equvalent_properties(ABD_matrix, zcoord_arr)
 
-                Ex_temp.append(Ex)  #For each theta, we will have 181 different phi values, and thus 181 different engineering constants.
+                Ex_temp.append(Ex)  # For each theta, we will have 181 different phi values, and thus 181 different engineering constants.
                 Ey_temp.append(Ey)
                 vxy_temp.append(vxy)
                 vyx_temp.append(vyx)
@@ -68,7 +68,7 @@ def main():
         vxy_f_arr.append(vxy_f_temp)
         vyx_f_arr.append(vyx_f_temp)
         Gxy_f_arr.append(Gxy_f_temp)
-        #Use the theta loop to append the 181 engineering constants in a 181*181 array, where the rows correspond to theta and the columns correspond to phi.
+        # Use the theta loop to append the 181 engineering constants in a 181*181 array, where the rows correspond to theta and the columns correspond to phi.
 
         
         

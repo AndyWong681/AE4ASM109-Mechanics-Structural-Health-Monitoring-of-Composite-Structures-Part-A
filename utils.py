@@ -2,29 +2,31 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-def sin(angle): #in radians
+def sin(angle): # in radians
+
     return np.sin(angle)
 
-def cos(angle): #in radians
+def cos(angle): # in radians
+
     return np.cos(angle)
 
-def stressTOstrain_trans(angle): #3x3 matrix angle transformation from stress to strain
-    m = cos(angle)
-    n = sin(angle)
+def stressTOstress_trans(angle): # 3x3 matrix angle transformation from stress to strain
+    m = cos(-angle)
+    n = sin(-angle)
     return np.array([[m**2, n**2, 2*m*n],[n**2, m**2, -2*m*n],[-m*n, m*n, m**2 - n**2]])
 
-def strainTOstress_trans(angle): #3x3 matrix angle transformation from strain to stress
-    m = cos(angle)
-    n = sin(angle)
+def strainTOstrain_trans(angle): # 3x3 matrix angle transformation from strain to stress
+    m = cos(-angle)
+    n = sin(-angle)
     return np.array([[m**2, n**2, m*n],[n**2, m**2, -m*n],[-2*m*n, 2*m*n, m**2 - n**2]])
 
-def stressTOstrain6x6_trans(angle): #6x6 matrix angle transformation from stress to strain
+def stressTOstress6x6_trans(angle): # 6x6 matrix angle transformation from stress to strain
     basemat6x6 = np.zeros((6,6))
     basemat6x6[0:3, 0:3] = stressTOstrain_trans(angle)
     basemat6x6[3:6, 3:6] = stressTOstrain_trans(angle)
     return basemat6x6
 
-def strainTOstress6x6_trans(angle): #6x6 matrix angle transformation from strain to stress
+def strainTOstrain6x6_trans(angle): # 6x6 matrix angle transformation from strain to stress
     basemat6x6 = np.zeros((6,6))
     basemat6x6[0:3, 0:3] = strainTOstress_trans(angle)
     basemat6x6[3:6, 3:6] = strainTOstress_trans(angle)
@@ -55,7 +57,7 @@ def local_elastic_property(E1, E2, G12, v12):
     Q12 = v12 * E2 * 1 / Q
     Q66 = G12
     
-    return Q11, Q12, Q22, Q66
+    return Q11, Q12, Q22, Q66, np.array([[Q11, Q12, 0],[Q12, Q22, 0],[0, 0, Q66]])
 
 
 def Q_transformed(Q11, Q12, Q22, Q66, theta_lst):
@@ -98,6 +100,16 @@ def ABD_Calc(Q_overall_lst, z_lst):
     A32_final_lst = []
     A33_final_lst = []
 
+    B11_final_lst = []
+    B12_final_lst = []
+    B13_final_lst = []
+    B21_final_lst = []
+    B22_final_lst = []
+    B23_final_lst = []
+    B31_final_lst = []
+    B32_final_lst = []
+    B33_final_lst = []
+
     D11_final_lst = []
     D12_final_lst = []
     D13_final_lst = []
@@ -132,6 +144,16 @@ def ABD_Calc(Q_overall_lst, z_lst):
         A32_local = Q62 * ( z_lst[i] - z_lst[i+1] )
         A33_local = Q66 * ( z_lst[i] - z_lst[i+1] )
 
+        B11_local = 1 / 2 * Q11 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B12_local = 1 / 2 * Q12 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B13_local = 1 / 2 * Q16 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B21_local = 1 / 2 * Q21 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B22_local = 1 / 2 * Q22 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B23_local = 1 / 2 * Q26 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B31_local = 1 / 2 * Q61 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B32_local = 1 / 2 * Q62 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+        B33_local = 1 / 2 * Q66 * (z_lst[i] ** 2 - z_lst[i + 1] ** 2)
+
         D11_local = 1 / 3 * Q11 * (z_lst[i] ** 3 - z_lst[i + 1] ** 3)
         D12_local = 1 / 3 * Q12 * (z_lst[i] ** 3 - z_lst[i + 1] ** 3)
         D13_local = 1 / 3 * Q16 * (z_lst[i] ** 3 - z_lst[i + 1] ** 3)
@@ -151,6 +173,16 @@ def ABD_Calc(Q_overall_lst, z_lst):
         A31_final_lst.append(A31_local)
         A32_final_lst.append(A32_local)
         A33_final_lst.append(A33_local)
+
+        B11_final_lst.append(B11_local)
+        B12_final_lst.append(B12_local)
+        B13_final_lst.append(B13_local)
+        B21_final_lst.append(B21_local)
+        B22_final_lst.append(B22_local)
+        B23_final_lst.append(B23_local)
+        B31_final_lst.append(B31_local)
+        B32_final_lst.append(B32_local)
+        B33_final_lst.append(B33_local)
 
         D11_final_lst.append(D11_local)
         D12_final_lst.append(D12_local)
@@ -172,6 +204,16 @@ def ABD_Calc(Q_overall_lst, z_lst):
     A31_final = sum(A31_final_lst)
     A32_final = sum(A32_final_lst)
     A33_final = sum(A33_final_lst)
+    
+    B11_final = sum(B11_final_lst)
+    B12_final = sum(B12_final_lst)
+    B13_final = sum(B13_final_lst)
+    B21_final = sum(B21_final_lst)
+    B22_final = sum(B22_final_lst)
+    B23_final = sum(B23_final_lst)
+    B31_final = sum(B31_final_lst)
+    B32_final = sum(B32_final_lst)
+    B33_final = sum(B33_final_lst)
 
     D11_final = sum(D11_final_lst)
     D12_final = sum(D12_final_lst)
@@ -184,12 +226,12 @@ def ABD_Calc(Q_overall_lst, z_lst):
     D33_final = sum(D33_final_lst)
 
 
-    ABD = [[A11_final, A12_final, A13_final, 0, 0, 0],
-           [A21_final, A22_final, A23_final, 0, 0, 0],
-           [A31_final, A32_final, A33_final, 0, 0, 0],
-           [0, 0, 0, D11_final, D12_final,D13_final],
-           [0, 0, 0, D21_final, D22_final, D23_final],
-           [0, 0, 0, D31_final, D32_final, D33_final]]
+    ABD = [[A11_final, A12_final, A13_final, B11_final, B12_final, B13_final],
+           [A21_final, A22_final, A23_final, B21_final, B22_final, B23_final],
+           [A31_final, A32_final, A33_final, B31_final, B32_final, B33_final],
+           [B11_final, B12_final, B13_final, D11_final, D12_final, D13_final],
+           [B21_final, B22_final, B23_final, D21_final, D22_final, D23_final],
+           [B31_final, B32_final, B33_final, D31_final, D32_final, D33_final]]
 
 
     return np.array(ABD)
@@ -219,3 +261,40 @@ def Equvalent_properties(ABD, z_lst):
     
 
     return Ex, Ey, vxy, vyx, Gxy, Ex_f, Ey_f, vxy_f, vyx_f, Gxy_f
+
+
+
+
+def Applied_Loading(Nx, Ny, Nxy, Mx, My, Mxy):  # applied loading in the form of Nx, Ny, Nxy, Mx, My, Mxy
+
+    load = np.array([Nx, Ny, Nxy, Mx, My, Mxy])   
+
+    return load
+
+
+
+
+
+def Strain_ply_calculation(strain_global, z_lst):
+    
+    strain = strain_global[:3]
+    curvature = strain_global[3:]
+
+    strain_global_lst = []
+
+    for i in range(len(z_lst)-1):
+
+        strain_global_local = strain + (z_lst[i] + z_lst[i+1]) / 2 * curvature
+        strain_global_lst.append(strain_global_local)
+
+    return np.array(strain_global_lst)
+
+
+
+
+       
+    
+
+    
+
+
