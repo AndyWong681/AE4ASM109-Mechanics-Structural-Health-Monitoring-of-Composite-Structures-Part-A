@@ -87,34 +87,104 @@ def update_properties(lamina_index, failure_mode):
     if failure_mode == 'FF':
         # Zero all properties for the failed lamina
         Q_overall[lamina_index] = np.zeros_like(Q_overall[lamina_index])
+
+        return Q_overall[lamina_index]
+
     elif failure_mode == 'IFF':
         # Apply 0.15 degradation factor to transverse properties
         Q_overall[lamina_index][[0,1],[1,0],[1,1]] *= 0.15 # Assuming transverse properties are at indices 1 and 2
+
+        return Q_overall[lamina_index]
     
 
 
-def laminate_iter(): 
-    Failure = False
 
-    ply_mat_fail = np.zeros_like(angle_arr_deg, dtype=bool)  # To track the number of failures for each lamina
-    ply_fail = np.zeros_like(angle_arr_deg, dtype=bool)  # To track if a lamina has failed at least once
+        
+def calculate_stresses(ABD_matrix, Nx, Ny, Nxy, Q_overall, i, z_lst):
+
+
+    global_strain = np.linalg.solve(ABD_matrix, np.array([Nx, Ny, Nxy, 0, 0, 0])) # Calculate global strains from applied loads
+
+    strain = global_strain[:3]
+    curvature = global_strain[3:]
+
+
+    strain_global_local = strain + (z_lst[i] + z_lst[i+1]) / 2 * curvature
+
+    strain_local = strainTOstrain_trans(angle_arr_deg[i])  # Assuming no transformation is needed for local strains
+
+    stress_local = Q_overall @ strain_local  # Calculate local stresses using the local stiffness matrix
+
+    sigma_1, sigma_2, sigma_12 = stress_local[0], stress_local[1], stress_local[2]
+
+
+    return sigma_1, sigma_2, sigma_12  # Placeholder for actual local stress calculations based on the ABD matrix and loading conditions
+
+
+
+def laminate_iter(Nx, Ny, Nxy, Q_overall, zcoord_arr, angle_arr_deg, z_lst, ABD_Calc):
+    Failure = False
+    ply_mat_fail = np.zeros_like(angle_arr_deg)  # To track the number of failures for each lamina
+    ply_ply_fail = np.zeros_like(angle_arr_deg, dtype=bool)  # To track if a lamina has failed at least once
 
     while Failure == False:
         # Implement criteria for each lamina and update the properties based on the degradation rule
+        fail_num = 0
+        ABD_matrix = ABD_Calc(Q_overall, zcoord_arr)  # Recalculate the ABD matrix with updated properties
+
         for i in range(len(angle_arr_deg)):
             # Calculate the stresses for the current lamina
-            sigma_1, sigma_2, sigma_12 = calculate_stresses(ABD_matrix, Nx_grid, Ny_grid, i)
-            
-            # Check for failure using Puck's criteria
-            if puck_failure_criterion_FF(sigma_1, sigma_2):
-                # Update properties based on degradation rule
-                update_properties(i, 'FF')
-                
-            elif puck_failure_criterion_IFF(sigma_2, sigma_12):
-                ply_mat_fail[i] = True
-                update_properties(i, 'IFF')
+            sigma_1, sigma_2, sigma_12 = calculate_stresses(ABD_matrix, Nx, Ny, Nxy, Q_overall, i, z_lst)
+            if ply_ply_fail[i] == False:
+                # Check for failure using Puck's criteria
+                if puck_failure_criterion_FF(sigma_1, sigma_2) == True:
+                    # Update properties based on degradation rule
+                    Q_overall = update_properties(i, 'FF') #zero all properties for the lamina
+                    fail_num += 1
+                    ply_ply_fail[i] = True  # Increment the failure count for the lamina
+                    continue
+                    
+                elif puck_failure_criterion_IFF(sigma_2, sigma_12) == True:
+                    fail_num += 1
+                    ply_mat_fail[i] += 1  # Increment the failure count for the lamina
+                    Q_overall = update_properties(i, 'IFF') 
+                    if ply_mat_fail[i] > 1:  # If the lamina has failed more than once, zero all properties
+                        Q_overall = update_properties(i, 'FF') #zero all properties for the lamina
+                        ply_ply_fail[i] = True
+                    continue
+            else:
+                continue  # Skip the lamina if it has already failed at least once
+        
+        if fail_num == 0:
+            break  # No failures, exit the loop
 
         if np.all(ply_fail == True):
             Failure = True  
 
 
+
+
+def failure_envelope():
+    Nx = np.linspace(-3e3, 3e3, 300)
+    Ny = np.linspace(-3e3, 3e3, 300)
+    Nx_grid, Ny_grid = np.meshgrid(Nx, Ny)
+    failure_points = []
+
+    for i in range(len(Nx)):
+        for j in range(len(Ny)):
+            if laminate_iter(Nx_grid[i, j], Ny_grid[i, j]) == True:  # Check if failure occurs for the given Nx and Ny
+                failure_points.append((Nx_grid[i, j], Ny_grid[i, j]))  # Store the failure point
+    failure_points = np.array(failure_points)
+
+
+    plt.figure(figsize=(8, 6))
+    plt.plot(failure_points[:, 0], failure_points[:, 1], 'ro',
+                label='Failure Envelope')
+    plt.xlabel('Nx (N/m)')
+    plt.ylabel('Ny (N/m)')
+    plt.title('Biaxial Stress Failure Envelope')
+    plt.grid()
+    plt.legend()
+    plt.show()
+
+failure_envelope()

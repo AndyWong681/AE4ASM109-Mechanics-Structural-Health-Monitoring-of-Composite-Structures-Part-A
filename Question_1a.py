@@ -63,6 +63,7 @@ def main():
         vxy_arr.append(vxy_temp)
         vyx_arr.append(vyx_temp)
         Gxy_arr.append(Gxy_temp)
+        
         Ex_f_arr.append(Ex_f_temp)
         Ey_f_arr.append(Ey_f_temp)
         vxy_f_arr.append(vxy_f_temp)
