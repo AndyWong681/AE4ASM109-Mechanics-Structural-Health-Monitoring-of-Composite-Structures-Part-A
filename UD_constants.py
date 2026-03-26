@@ -1,8 +1,12 @@
 E1 = 172.3e9 # Pa
+E1f = 230e9 # Pa
 E2 = 10.2e9 # Pa
 v12 = 0.25 # unitless
+v12f = 0.2 
+v21f = v12f * E2 / E1f
 G12 = 5.58e9 # Pa
 Xt = 1923e6 # Pa, tensile strength in the fibre direction
+Xc = 1480e6 # Pa, compressive strength in the fibre direction
 Yt = 84e6 # Pa, tensile strength in the transverse direction
 S = 144.5e6 # Pa, shear strength
 
