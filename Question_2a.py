@@ -43,38 +43,46 @@ Nx_grid, Ny_grid = np.meshgrid(Nx, Ny)
 
 #Puck failure criterion for axial loading Nx-Ny
 def puck_failure_criterion_FF(sigma_1, sigma_2):
-    
-    if sigma_1 >= 0:  # Tension
-        X = 1500e6  # Tension strength in Pa
-    else:  # Compression
-        X = -1480e6  # Compression strength in Pa
+    Xt = 1923e6
+    Xc = 1480e6   # positive magnitude
 
-    FF = 1 / X * (sigma_1 - (v12 - v12f * 1.1 * E1 / E1f) * (sigma_2))
+    k = (v12 - v12f * 1.1 * E1 / E1f)
 
-    if FF >= 1:
+    if sigma_1 >= 0:
+        FI = (sigma_1 - k * sigma_2) / Xt
+    else:
+        FI = -(sigma_1 - k * sigma_2) / Xc
+
+    if FI >= 1:
         return True # Failure occurs
     else: 
         return False  # No failure
 
 
 
+
 def puck_failure_criterion_IFF(sigma_2, sigma_12):
     
-    sigma_23 = sigma_12 / (2 * 0.2) * (np.sqrt(1 + 2 * 0.2 * Xc / S) - 1)
+    sigma_23 = S / (2 * 0.2) * (np.sqrt(1 + 2 * 0.2 * Yc / S) - 1)
     p_23 =  0.2 * sigma_23 / abs(S)
-    r = abs(sigma_2 / sigma_12)
+    
+    if abs(sigma_12) < 1e-12:
+        r = np.inf
+    else:
+        r = abs(sigma_2 / sigma_12)
+
     criterion = sigma_23 / abs(S)
 
     IFF_A = 0
     IFF_B = 0
     IFF_C = 0
 
-    if sigma_2 > 0:
-        IFF_A = np.sqrt((sigma_12 / S) ** 2 + (1 - 0.3 * Xt / S) ** 2 * (sigma_2 / Xt) ** 2) + 0.3 * sigma_2 / S
+    if sigma_2 >= 0:
+        IFF_A = np.sqrt((sigma_12 / S) ** 2 + (1 - 0.3 * Yt / S) ** 2 * (sigma_2 / Yt) ** 2) + 0.3 * sigma_2 / S
     elif sigma_2 < 0 and r <= criterion:
-        IFF_B = 1 / S * np.sqrt(sigma_12 ** 2 + (0.2 * sigma_2) ** 2) + 0.2 * sigma_2 
+        IFF_B = 1 / S * (np.sqrt(sigma_12 ** 2 + (0.2 * sigma_2) ** 2) + 0.2 * sigma_2 )
     else:
-        IFF_C = ((sigma_12 / (2 * (1 + p_23 * S))) ** 2 + (sigma_2 / Xc) ** 2 ) * Xc / (-sigma_2)
+        IFF_C = ((sigma_12 / (2 * (1 + p_23) * S)) ** 2 + (sigma_2 / Yc) ** 2 ) * Yc / (-sigma_2)
     
 
     if IFF_A > 1 or IFF_B > 1 or IFF_C > 1:
@@ -113,15 +121,16 @@ def calculate_stresses(ABD_matrix, Nx, Ny, Nxy, Q_overall, i, z_lst):
 
     strain_global_local = strain + (z_lst[i] + z_lst[i+1]) / 2 * curvature
 
-    strain_local = strainTOstrain_trans(angle_arr_deg[i]) @ strain_global_local  # Transform global strains to local coordinates for the current lamina
-    
-    stress_local = Q_overall[i] @ strain_local  # Calculate local stresses using the local stiffness matrix
+    angle_rad = np.radians(angle_arr_deg[i])
+    strain_local = strainTOstrain_trans(angle_rad) @ strain_global_local    # Transform global strains to local coordinates for the current lamina
+
+    _,_,_,_,Q = local_elastic_property(E1, E2, G12, v12)
+    sigma_local = Q @ strain_local  # Calculate local stresses using the local stiffness matrix
 
     #sigma_1, sigma_2, sigma_12 = stress_local[0], stress_local[1], stress_local[2]
-    sigma_1 = stress_local[0]
-    sigma_2 = stress_local[1]  
-    sigma_12 = stress_local[2]
-
+    sigma_1 = sigma_local[0]
+    sigma_2 = sigma_local[1]
+    sigma_12 = sigma_local[2] 
 
     return sigma_1, sigma_2, sigma_12  # Placeholder for actual local stress calculations based on the ABD matrix and loading conditions
 
@@ -181,8 +190,8 @@ def laminate_iter(Nx, Ny, Nxy, Q_overall, zcoord_arr, angle_arr_deg):
 
 
 def failure_envelope():
-    Nx = np.linspace(-3e3, 3e3, 9)
-    Ny = np.linspace(-3e3, 3e3, 9)
+    Nx = np.linspace(-1, 1, 9)
+    Ny = np.linspace(-1, 1, 9)
     Nx_grid, Ny_grid = np.meshgrid(Nx, Ny)
     failure_points = []
 
