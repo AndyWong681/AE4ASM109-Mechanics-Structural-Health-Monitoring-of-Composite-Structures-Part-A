@@ -95,7 +95,14 @@ def main():
     surf = ax.plot_surface(X, Y, Ex_arr, cmap='viridis', edgecolor='none')
 
     # Colorbar showing Z scale
-    fig.colorbar(surf, ax=ax, shrink=0.6, label="Z value")
+    fig.colorbar(surf, ax=ax, shrink=0.6, label=r"$E_x$ [Pa]")
+    
+    # Add axis labels and title
+    ax.set_xlabel(r"$\theta$ [$^\circ$]")
+    ax.set_ylabel(r"$\phi$ [$^\circ$]")
+    # ax.set_zlabel('Ex [Pa]')
+    ax.set_title(r'In-plane engineering constant $E_x$ vs $\theta$ and $\phi$')
+    
     plt.show()
 
     # # Plot contour map

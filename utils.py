@@ -46,6 +46,8 @@ def zcoordinate(theta_lst, t):
 
     return np.array(z_coordinate)
 
+    
+
 
 
 def local_elastic_property(E1, E2, G12, v12):
@@ -288,6 +290,89 @@ def Strain_ply_calculation(strain_global, z_lst):
         strain_global_lst.append(strain_global_local)
 
     return np.array(strain_global_lst)
+
+
+
+def zcoordinates_ply_group1b(theta_lst, t, zcoordinate):  # for each ply group, we will have 500 elements in the z direction, and the total number of groups is equal to the length of theta_lst
+
+    z_coordinate_group_lst = []  # by giving each ply group thickness 500 elemetns, with total number of groups = len(theta_lst)
+
+    for i in range(len(theta_lst)):
+
+        z_coordinate_group = np.linspace(zcoordinate(theta_lst, t)[i], zcoordinate(theta_lst, t)[i+1], 500)
+
+        z_coordinate_group_lst.append(z_coordinate_group)
+
+    return z_coordinate_group_lst
+
+
+
+def Strain_ply_calculation_1b(strain_global, z_lst):
+    
+    strain = strain_global[:3]
+    curvature = strain_global[3:]
+
+    strain_global_lst_large = [] #Should be 8 elemetns, each elements with 500 subelements
+
+    for i in range(len(z_lst)):
+
+        strain_global_lst_small = [] # should be 500 elements
+
+        for j in range(len(z_lst[i])):
+
+            strain_global_local = strain + z_lst[i][j] * curvature
+            strain_global_lst_small.append(strain_global_local)
+
+        strain_global_lst_large.append(strain_global_lst_small)
+        
+
+    return np.array(strain_global_lst_large)
+
+
+
+def Global_to_local_strain1b(strain_global_lst_large, theta_lst):
+
+    strain_local_lst_large = []
+
+    for i in range(len(theta_lst)):
+
+        m = np.cos(np.radians(float(theta_lst[i])))
+        n = np.sin(np.radians(float(theta_lst[i])))
+
+        T = np.array([[m**2, n**2, m*n], 
+                      [n**2, m**2, -m*n], 
+                      [-2*m*n, 2*m*n, m**2 - n**2]
+                      ])
+
+        strain_local_lst_small = []
+
+        for j in range(len(strain_global_lst_large[i])):
+
+            strain_local = T @ strain_global_lst_large[i][j]
+            strain_local_lst_small.append(strain_local)
+
+        strain_local_lst_large.append(strain_local_lst_small)
+
+    return np.array(strain_local_lst_large)
+
+
+
+def Stress_ply_calculation_1b(strain_local_lst_large, Q0):
+    stress_local_lst_large = []
+
+    for i in range(len(strain_local_lst_large)):
+
+
+        stress_local_lst_small = []
+
+        for j in range(len(strain_local_lst_large[i])):
+
+            stress_local = Q0 @ strain_local_lst_large[i][j]
+            stress_local_lst_small.append(stress_local)
+
+        stress_local_lst_large.append(stress_local_lst_small)
+
+    return np.array(stress_local_lst_large)
 
 
 
