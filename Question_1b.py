@@ -32,7 +32,7 @@ stress_local_lst_large = Stress_ply_calculation_1b(strain_local_lst_large, Q0)
 
 
 # Plot strain vs thickness for each component
-def plot_strain_x_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_strain_1_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -60,15 +60,18 @@ def plot_strain_x_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, a
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Strain X (με)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Strain X vs Thickness', fontsize=14)
+    plt.xlabel(r'$\epsilon_1$ [με]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Strain 1 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_strain_1_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_strain_1_vs_thickness.png")
+    plt.close()
 
-def plot_strain_y_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_strain_2_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -96,15 +99,18 @@ def plot_strain_y_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, a
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Strain Y (με)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Strain Y vs Thickness', fontsize=14)
+    plt.xlabel(r'$\epsilon_2$ [με]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Strain 2 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_strain_2_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_strain_2_vs_thickness.png")
+    plt.close()
 
-def plot_strain_xy_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_strain_12_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -132,16 +138,19 @@ def plot_strain_xy_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, 
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Strain XY (με)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Strain XY vs Thickness', fontsize=14)
+    plt.xlabel(r'$\gamma_{12}$ [με]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Strain 12 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_strain_12_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_strain_12_vs_thickness.png")
+    plt.close()
 
 # Plot stress vs thickness for each component
-def plot_stress_x_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_stress_1_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -169,15 +178,18 @@ def plot_stress_x_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, a
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Stress X (MPa)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Stress X vs Thickness', fontsize=14)
+    plt.xlabel(r'$\sigma_1$ [MPa]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Stress 1 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_stress_1_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_stress_1_vs_thickness.png")
+    plt.close()
 
-def plot_stress_y_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_stress_2_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -205,15 +217,18 @@ def plot_stress_y_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, a
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Stress Y (MPa)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Stress Y vs Thickness', fontsize=14)
+    plt.xlabel(r'$\sigma_2$ [MPa]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Stress 2 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_stress_2_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_stress_2_vs_thickness.png")
+    plt.close()
 
-def plot_stress_xy_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg):
+def plot_stress_12_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=False):
     plt.figure(figsize=(10, 6))
     first_z_start = None
     last_z_end = None
@@ -241,21 +256,39 @@ def plot_stress_xy_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, 
     # Add vertical line connecting first start to last end at x=0
     if first_z_start is not None and last_z_end is not None:
         plt.axline((0, first_z_start), (0, last_z_end), color='k', linewidth=1, alpha=0.7)
-    plt.xlabel('Stress XY (MPa)', fontsize=12)
-    plt.ylabel('Thickness (mm)', fontsize=12)
-    plt.title('Stress XY vs Thickness', fontsize=14)
+    plt.xlabel(r'$\tau_{12}$ [MPa]', fontsize=18)
+    plt.ylabel('Thickness [mm]', fontsize=18)
+    # plt.title('Stress 12 vs Thickness', fontsize=18)
     plt.legend()
     plt.grid(alpha=0.3)
     plt.tight_layout()
-    plt.show()
+    if save:
+        plt.savefig('Figures/1b_stress_12_vs_thickness.png', dpi=300, bbox_inches='tight')
+        print("Saved: Figures/1b_stress_12_vs_thickness.png")
+    plt.close()
 
+
+# Function to save all 6 plots to Figures/ directory
+def save_all_plots():
+    """Generate and save all 6 thickness-based plots to the Figures directory."""
+    print("\nGenerating and saving all 6 plots...")
+    plot_strain_1_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    plot_strain_2_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    plot_strain_12_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    plot_stress_1_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    plot_stress_2_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    plot_stress_12_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg, save=True)
+    print("All plots saved successfully!\n")
 
 
 # Create all 6 plots
-plot_strain_x_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
-plot_strain_y_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
-plot_strain_xy_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
-plot_stress_x_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
-plot_stress_y_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
-plot_stress_xy_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_strain_1_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_strain_2_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_strain_12_vs_thickness(strain_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_stress_1_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_stress_2_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+plot_stress_12_vs_thickness(stress_local_lst_large, zcoordinates_ply_group, angle_arr_deg)
+
+# To save all 6 plots to the Figures/ directory, uncomment the line below:
+save_all_plots()
 
