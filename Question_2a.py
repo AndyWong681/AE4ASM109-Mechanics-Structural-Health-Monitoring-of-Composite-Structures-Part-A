@@ -188,7 +188,6 @@ def laminate_iter(Nx, Ny, Nxy, Q_overall, zcoord_arr, angle_arr_deg):
 
 
 
-
 def failure_envelope():
     Nx = np.linspace(-1, 1, 9)
     Ny = np.linspace(-1, 1, 9)

@@ -48,8 +48,6 @@ def zcoordinate(theta_lst, t):
 
     
 
-
-
 def local_elastic_property(E1, E2, G12, v12):
     
     v21 = E2 * v12 / E1
@@ -60,6 +58,7 @@ def local_elastic_property(E1, E2, G12, v12):
     Q66 = G12
     
     return Q11, Q12, Q22, Q66, np.array([[Q11, Q12, 0],[Q12, Q22, 0],[0, 0, Q66]])
+
 
 
 def Q_transformed(Q11, Q12, Q22, Q66, theta_lst):
@@ -88,6 +87,7 @@ def Q_transformed(Q11, Q12, Q22, Q66, theta_lst):
         Q_overall_lst.append(Q_bar)
 
     return Q_overall_lst
+
 
 
 def ABD_Calc(Q_overall_lst, z_lst):
@@ -242,6 +242,11 @@ def ABD_Calc(Q_overall_lst, z_lst):
 
 def Equvalent_properties(ABD, z_lst):
 
+    # This is used in Question_1a.py to compute the equivalent engineering constants from the ABD matrix
+    # The logic is based on the fact that the equivalent engineering constants can be derived from the A and D matrices, which represent the in-plane and bending stiffness of the laminate, respectively.
+    # The formulas for calculating the equivalent engineering constants are derived from classical laminate theory and are based on the assumption of linear elasticity and small deformations.
+    # The function takes the ABD matrix and the z coordinates of the plies as inputs and returns the equivalent engineering constants Ex, Ey, vxy, vyx, Gxy for in-plane properties and Ex_f, Ey_f, vxy_f, vyx_f, Gxy_f for flexural properties.
+    # It is obtained from ChatGPT
 
     t_total = z_lst[0] - z_lst[-1]
 
@@ -275,8 +280,6 @@ def Applied_Loading(Nx, Ny, Nxy, Mx, My, Mxy):  # applied loading in the form of
 
 
 
-
-
 def Strain_ply_calculation(strain_global, z_lst):
     
     strain = strain_global[:3]
@@ -286,7 +289,7 @@ def Strain_ply_calculation(strain_global, z_lst):
 
     for i in range(len(z_lst)-1):
 
-        strain_global_local = strain + (z_lst[i] + z_lst[i+1]) / 2 * curvature
+        strain_global_local = strain + (z_lst[i] + z_lst[i+1]) / 2 * curvature # the local strain at the middle of each ply, which is the average of the z coordinates of the top and bottom of each ply, multiplied by the curvature, and added to the global strain to get the local strain for each ply
         strain_global_lst.append(strain_global_local)
 
     return np.array(strain_global_lst)
@@ -332,7 +335,7 @@ def Strain_ply_calculation_1b(strain_global, z_lst):
 
 def Global_to_local_strain1b(strain_global_lst_large, theta_lst):
 
-    strain_local_lst_large = []
+    strain_local_lst_large = []    
 
     for i in range(len(theta_lst)):
 
@@ -357,11 +360,12 @@ def Global_to_local_strain1b(strain_global_lst_large, theta_lst):
 
 
 
+
 def Stress_ply_calculation_1b(strain_local_lst_large, Q0):
+    
     stress_local_lst_large = []
 
     for i in range(len(strain_local_lst_large)):
-
 
         stress_local_lst_small = []
 

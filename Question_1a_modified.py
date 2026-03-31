@@ -77,6 +77,9 @@ def compute_engineering_constants():
     return phi_values, theta_values, results
 
 
+# This computing engineering constants function is based on Question_1a.py, but with some modifications to make it more efficient and organized.
+# The main logic is the same, but the code is structured to be more modular and easier to read.
+
 def plot_surface(phi_values, theta_values, Z, zlabel="", title="", convert_to_GPa=False,
                  elev=28, azim=-55, save_path=None):
     """
@@ -506,3 +509,5 @@ def main(plot_mode="subplots"):
 if __name__ == "__main__":
     main(plot_mode="single")
     print("sfgg done")
+
+
