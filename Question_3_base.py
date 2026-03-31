@@ -168,7 +168,7 @@ def FPF_iteration(N_load, rng):
         A += Qbar * t_ply
 
     # load: resultant N at +45 degrees to X-axis, sin and cos are squared because it's a tensor transformation and not a simple projection
-    N_total = N_load * 1e3  # N/mm -> N/m
+    N_total = N_load * 1e3  # N/mm to N/m
     load_ang = np.radians(45)
     Nx = N_total * np.cos(load_ang) ** 2
     Ny = N_total * np.sin(load_ang) ** 2
