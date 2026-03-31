@@ -144,7 +144,7 @@ def sample_material_properties(rng):
     }
     return props
 
-
+# runs 1 iteration to check for FPF failure, general approach is the same from 2a
 def FPF_iteration(N_load, rng):
     props = sample_material_properties(rng)
 
@@ -179,8 +179,6 @@ def FPF_iteration(N_load, rng):
         strain = np.linalg.solve(A, np.array([Nx, Ny, Ns]))
     except:
         print("")
-        #return 1, E1, E2, v12, G12, Xt, Xc, Yt, Yc, S
-
 
     # first ply failure check
     for ang in stack:
@@ -195,7 +193,7 @@ def FPF_iteration(N_load, rng):
     return 0, E1, E2, v12, G12, Xt, Xc, Yt, Yc, S
 
 # 30000 iterations
-def monte_carlo_failure_rate(N_load, n_iter=30000, seed=1, checkpoint=100):
+def monte_carlo_failure_rate(N_load, n_iter, seed, checkpoint):
     rng = np.random.default_rng(seed)
     failures = 0
     x_vals = []
